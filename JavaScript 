@@ -1,0 +1,114 @@
+// Toggle between Login and Register Forms
+const loginTab = document.getElementById('login-tab');
+const registerTab = document.getElementById('register-tab');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const authPage = document.getElementById('auth-page');
+const orderPage = document.getElementById('order-page');
+const menuBtn = document.getElementById('menu-btn');
+const dropdownMenu = document.getElementById('dropdown-menu');
+
+function switchToLogin() {
+    loginTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+    loginTab.classList.remove('text-gray-500');
+    registerTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+    registerTab.classList.add('text-gray-500');
+    loginForm.classList.remove('hidden');
+    registerForm.classList.add('hidden');
+}
+
+function switchToRegister() {
+    registerTab.classList.add('text-primary', 'border-b-2', 'border-primary');
+    registerTab.classList.remove('text-gray-500');
+    loginTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
+    loginTab.classList.add('text-gray-500');
+    registerForm.classList.remove('hidden');
+    loginForm.classList.add('hidden');
+}
+
+// Switch to Order Page After Login/Register
+document.getElementById('login-btn').addEventListener('click', () => {
+    authPage.classList.add('hidden');
+    orderPage.classList.remove('hidden');
+});
+
+document.getElementById('register-btn').addEventListener('click', () => {
+    authPage.classList.add('hidden');
+    orderPage.classList.remove('hidden');
+});
+
+// Toggle 3-Dot Dropdown Menu
+menuBtn.addEventListener('click', () => {
+    dropdownMenu.classList.toggle('hidden');
+});
+
+// Close Menu When Clicking Outside
+document.addEventListener('click', (e) => {
+    if (!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.add('hidden');
+    }
+});
+
+// Sign Out Function
+function signOut() {
+    orderPage.classList.add('hidden');
+    authPage.classList.remove('hidden');
+    switchToLogin();
+    dropdownMenu.classList.add('hidden');
+}
+
+// Share Website Function
+function shareWebsite() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'TEDDY Chickens matuga',
+            text: 'Order fresh high-quality chickens at great prices!',
+            url: window.location.href
+        });
+    } else {
+        alert('Share this link with your friends: ' + window.location.href);
+    }
+    dropdownMenu.classList.add('hidden');
+}
+
+// Tab Click Handlers
+loginTab.addEventListener('click', switchToLogin);
+registerTab.addEventListener('click', switchToRegister);
+
+// Lazy Load Images
+document.addEventListener("DOMContentLoaded", function() {
+    const lazyImages = document.querySelectorAll(".lazy-load");
+    
+    if ("IntersectionObserver" in window) {
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const image = entry.target;
+                    image.src = image.dataset.src;
+                    image.classList.add("loaded");
+                    imageObserver.unobserve(image);
+                }
+            });
+        });
+        lazyImages.forEach(image => imageObserver.observe(image));
+    } else {
+        // Fallback for older browsers
+        lazyImages.forEach(image => {
+            image.src = image.dataset.src;
+            image.classList.add("loaded");
+        });
+    }
+});
+
+// Preview Local Images (for when you want to upload new images later)
+function previewImage(input, imageId) {
+    const preview = document.getElementById(imageId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.add("loaded");
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
